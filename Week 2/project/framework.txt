@@ -1,0 +1,42 @@
+WEEK 2 PROJECT — SCOPING (Enterprise Policy Q&A Bot)
+=====================================================
+
+ONE-LINER
+My RAG app helps a state-agency employee or AstreaX/GovTech consultant answer
+questions about state IT procurement and security policy from the Texas
+Department of Information Resources (DIR) statewide policy manuals, in a
+simple chat interface, with 90%+ faithfulness (every answer traceable to a
+specific policy section).
+
+WHY THIS CORPUS
+- Texas DIR publishes its statewide technology/procurement/security policies
+  as public PDFs — free, no login, no confidentiality issue.
+- Directly relevant to the state/local government consulting work AstreaX
+  does, so this doubles as a real work-adjacent artifact.
+- You can swap in a different state's manual, a specific city's policy
+  manual, or Michael Baker's own public materials later with zero code
+  changes — the pipeline doesn't care what PDF it's fed.
+
+THE FRAMEWORK
+- Use case: Answer "what does policy say about X" questions for someone
+  evaluating or complying with TX state IT policy, surfaced as a local
+  chat app (Streamlit).
+- Corpus: 3-5 Texas DIR policy PDFs (~100-300 pages total), public,
+  updated periodically, English.
+- Ingestion + cleaning: Load PDFs with a PDF loader, strip headers/footers
+  and page-number boilerplate, keep section numbering intact (it's the
+  citation anchor).
+- Ingestion + freshness: One-time load for this project; note in the doc
+  that a production version would re-ingest on a quarterly cadence
+  matching DIR's own review cycle.
+- Chunking + embedding: Semantic chunking by section/sub-section (~500-800
+  tokens per chunk) so a chunk never crosses a policy boundary; OpenAI/
+  Nebius text-embedding model.
+- Retrieve: Chroma (local vector store) with hybrid dense + BM25 retrieval,
+  top-k=5, reranked before generation.
+- Refusal path: If retrieval confidence is low, the bot says "I could not
+  find this in the policy documents" rather than guessing.
+
+BUILD TRACK: Python — LangChain (loaders/splitters/retrievers) +
+LangGraph not required here (RAG is a single-pass chain, not multi-step
+agentic control flow) + LangSmith optional for tracing.

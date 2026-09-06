@@ -1,0 +1,49 @@
+WEEK 3 PROJECT — SCOPING (Market Research Agent: Competitor Analysis)
+=======================================================================
+
+ONE-LINER
+My agent helps an AstreaX/GovTech strategy or BD person research a
+competitor in the state-and-local-government services market in a local
+web app, replacing the 3-4 hours of manual googling, tab-juggling, and
+note-assembly it takes to build a competitor brief today. It searches the
+web, pulls each competitor's positioning/services/recent news on its own
+using 3 tools (search, per-competitor deep search, extraction), hands off
+to the user to review before anything is saved, and I'll know it works
+when a usable competitor briefing comes out in under 5 minutes that a BD
+person would actually bring into a deal-review meeting.
+
+THE FRAMEWORK
+- Agent goal: Given a target market/segment (or a specific competitor
+  name), produce a structured competitor analysis briefing.
+- Where used: Local Streamlit app (consistent with Week 2's interface).
+- Steps:
+  1. Discovery agent finds the top 3 competitors for the given
+     market/segment via web search.
+  2. Data-gathering agent runs targeted searches per competitor (recent
+     news, pricing signals, public positioning).
+  3. Extraction agent pulls structured fields (services, positioning,
+     recent news, notable clients) from the gathered text.
+  4. Orchestrator (LangGraph state graph) sequences the above and compiles
+     the final briefing document.
+- Tools: web search (read-only), LLM extraction (read-only), local file
+  write of the final briefing (the only "write" action, and it's local,
+  not sent anywhere).
+- Memory: session-only for this project — each run is independent. (A
+  production version could add a long-term store of past briefings; noted
+  as a "future work" line in the project doc, not built.)
+- Never do: never send anything externally (no email/Slack/webhook
+  integration), never present unsourced claims as fact — every claim in
+  the briefing must trace back to a specific search result.
+- Human-in-the-loop: the compiled briefing is shown in the UI for review
+  before it's saved to disk. Nothing is auto-published anywhere.
+- Failure handling: if a search call returns nothing or errors, the agent
+  retries once, then explicitly marks that field "not found in available
+  sources" in the final briefing rather than guessing.
+- Success measure: for 2-3 real competitors, the agent produces a briefing
+  with correct company names, at least 2 sourced facts per competitor, and
+  clearly marks anything it could not verify.
+
+BUILD TRACK: Python — LangGraph state machine with 3 worker nodes + an
+orchestrator node. Search tool: DuckDuckGo (no API key needed, so you can
+get running immediately); swappable for Tavily or you.com later by
+changing one file if you want higher-quality results.
