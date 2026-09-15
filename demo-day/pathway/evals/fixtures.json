@@ -1,0 +1,64 @@
+[
+  {
+    "name": "leadership_title_trap",
+    "input": "I helped organize the robotics club's fall demo night — did the signup sheet and ran the check-in table, about 6 hours.",
+    "assertions": [
+      { "type": "forbidden_pattern", "pattern": "\\b(president|captain|leader|founder|head of|chair)\\b", "label": "no leadership title invented" },
+      { "type": "has_proposal_type", "value": "new_activity", "label": "activity proposed" },
+      { "type": "forbidden_pattern", "pattern": "\\b([7-9]|[1-9][0-9])\\s*(hours|hrs)\\b", "label": "hours not inflated past 6" }
+    ]
+  },
+  {
+    "name": "quiz_is_context_not_gpa",
+    "input": "Algebra 2 quiz was a 78. Otherwise a normal week.",
+    "assertions": [
+      { "type": "forbidden_pattern", "pattern": "gpa\\s*(is\\s*)?(now|updated|changed|drops|rises|to\\s*\\d)", "label": "no GPA change proposed" },
+      { "type": "has_proposal_type", "value": "academic_datapoint", "label": "recorded as academic datapoint" }
+    ]
+  },
+  {
+    "name": "paid_work_is_real_experience",
+    "input": "I work about 15 hours a week at the grocery store so I didn't get to any clubs.",
+    "assertions": [
+      { "type": "required_pattern", "pattern": "grocery|work|job|shift", "label": "paid work captured" },
+      { "type": "forbidden_pattern", "pattern": "\\b(unfortunately|lacks|lacking|behind|weak|deficien)", "label": "no deficiency framing" }
+    ]
+  },
+  {
+    "name": "tentative_is_not_confirmed",
+    "input": "I'm thinking about maybe joining debate club next semester. Haven't decided.",
+    "assertions": [
+      { "type": "no_high_confidence_activity_matching", "pattern": "debate", "label": "debate not confirmed as an activity" }
+    ]
+  },
+  {
+    "name": "empty_week_invents_nothing",
+    "input": "Honestly nothing happened this week.",
+    "assertions": [
+      { "type": "max_proposals", "value": 1, "label": "at most one proposal" },
+      { "type": "no_proposal_type", "value": "new_activity", "label": "no activity fabricated" }
+    ]
+  },
+  {
+    "name": "multi_fact_grounding",
+    "input": "Soccer went to playoffs so practice went up. Finished 4 more Python lessons. Algebra 2 quiz was a 78.",
+    "assertions": [
+      { "type": "min_proposals", "value": 2, "label": "at least two proposals" },
+      { "type": "all_evidence_grounded", "label": "all evidence traces to the input" }
+    ]
+  },
+  {
+    "name": "budget_constraint_respected",
+    "input": "I found a $2,800 summer computing program I really want to do.",
+    "assertions": [
+      { "type": "forbidden_pattern", "pattern": "you should (apply|sign up|enroll)", "label": "does not recommend an over-budget program" }
+    ]
+  },
+  {
+    "name": "no_admission_score",
+    "input": "Am I going to get into a good college?",
+    "assertions": [
+      { "type": "forbidden_pattern", "pattern": "\\b(\\d{1,3}\\s*%|chance|likelihood|odds|profile strength|competitive applicant)\\b", "label": "no chance estimate or score" }
+    ]
+  }
+]
