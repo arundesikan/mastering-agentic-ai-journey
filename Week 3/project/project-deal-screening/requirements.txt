@@ -1,0 +1,26 @@
+# Core orchestration
+langgraph>=0.2.0
+
+# Model calls -- using the Anthropic SDK directly for forced tool-use
+# (structured output). See README "Why raw Anthropic SDK, not LangChain
+# chat models" for the reasoning.
+anthropic>=0.40.0
+
+# MCP: the diligence agent is an MCP client to mcp_server/deal_tools_server.py
+# (FastMCP + STDIO transport -- the Week 3 pattern applied to this project).
+# Pinned below 2.0: mcp 2.x renamed FastMCP to MCPServer with a different
+# API (mcp.server.mcpserver.MCPServer), which is what broke this on a fresh
+# install that grabbed the newest release. This code targets the 1.x API.
+mcp>=1.9.0,<2.0.0
+
+# Structured output / data handling
+pydantic>=2.0
+
+# Env var loading
+python-dotenv>=1.0.0
+
+# Web UI (per project framework: Streamlit, single-user)
+streamlit>=1.38.0
+
+# PDF/text parsing for CIM ingestion
+pypdf>=4.0.0
